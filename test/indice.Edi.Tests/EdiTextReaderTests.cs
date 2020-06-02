@@ -850,7 +850,25 @@ namespace indice.Edi.Tests
 
             Assert.Equal(2, interchange.Messages[0].Consignments[0].Goods.Count);
         }
+        [Fact]
+        [Trait(Traits.Tag, "X12")]
+        [Trait(Traits.Tag, "870")]
+        public void X12_870_Test() {
+            var grammar = EdiGrammar.NewX12();
 
+            var interchange = default(X12_870);
+            using (var stream = Helpers.GetResourceStream("X12.870.edi")) {
+                interchange = new EdiSerializer().Deserialize<X12_870>(new StreamReader(stream), grammar);
+            }
+
+            Assert.NotNull(interchange);
+            Assert.Equal("3KRRHT1Z", interchange.CreditDecisionsList[0].BSRElement.ReferenceNumber);
+            Assert.Equal("85K2CRYI", interchange.CreditDecisionsList[4].BSRElement.ReferenceNumber);
+            Assert.Equal("ZZ", interchange.CreditDecisionsList[4].REFElement[0].Qualifier);
+            //Assert.Equal("A", interchange.CreditDecisionsList[4].REFElement[1].DecisionCode);
+            Assert.Equal(93, interchange.CreditDecisionsList[4].N1Element.Qualifier);
+
+        }
         [Fact, Trait(Traits.Tag, "EDIFact"), Trait(Traits.Issue, "#24"), Trait(Traits.Issue, "#19")]
         public void EdiTextReader_NewLine_Terminator_CardridgeReturn_ShouldbeIgnored() {
            
