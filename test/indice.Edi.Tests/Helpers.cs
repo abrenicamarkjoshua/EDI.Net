@@ -26,5 +26,10 @@ namespace indice.Edi.Tests
             Stream stream = File.OpenRead(path);
             return stream;
         }
+
+        public static void format870(ref string formatted870Raw) {
+            string output = formatted870Raw.Replace("\r\n", "~\n").Replace("\r", "~\r").Replace("~~", "~");
+            formatted870Raw = output;
+        }
     }
 }

@@ -853,6 +853,69 @@ namespace indice.Edi.Tests
         [Fact]
         [Trait(Traits.Tag, "X12")]
         [Trait(Traits.Tag, "870")]
+        public void X12_870_Formatted_Test() {
+            var grammar = EdiGrammar.NewX12();
+
+            var interchange = default(X12_870);
+            #region
+            string formatted870 = 
+                @"ISA*00*          *00*          *ZZ*WFCF1TEST      *01*085209526T     *200519*1341*U*00401*000010009*0*T*~
+                GS*RS*WFCF1TEST*085209526T*20200519*1341*7*X*004030
+                ST*870*70001
+                BSR*3*AO*3KRRHT1Z*20200409****352600
+                REF*ZZ*1424.00
+                REF*ZZ*A
+                REF*AY*614739
+                N1*BY*Amazon.com Inc.*93*01550
+                SE*7*70001
+                ST*870*70002
+                BSR*3*AO*8EI6YWQA*20191125****352600
+                REF*ZZ*61.00
+                REF*ZZ*A
+                REF*AY*614740
+                N1*BY*Amazon.com Inc.*93*01550
+                SE*7*70002
+                ST*870*70003
+                BSR*3*AO*84X89VBC*20191201****352600
+                REF*ZZ*778.00
+                REF*ZZ*A
+                REF*AY*614741
+                N1*BY*Amazon.com Inc.*93*01550
+                SE*7*70003
+                ST*870*70004
+                BSR*3*AO*3MIQAOMC*20191104****352600
+                REF*ZZ*102.00
+                REF*ZZ*A
+                REF*AY*614742
+                N1*BY*Amazon.com Inc.*93*01550
+                SE*7*70004
+                ST*870*70005
+                BSR*3*AO*85K2CRYI*20200409****352600
+                REF*ZZ*77.00
+                REF*ZZ*A
+                REF*AY*614743
+                N1*BY*Amazon.com Inc.*93*01550
+                SE*7*70005
+                GE*5*7
+                IEA*1*000010009
+                ";
+            #endregion
+            Helpers.format870(ref formatted870);
+            using (var stream = Helpers.StreamFromString(formatted870)) {
+                interchange = new EdiSerializer().Deserialize<X12_870>(new StreamReader(stream), grammar);
+            }
+
+            Assert.NotNull(interchange);
+            Assert.Equal("3KRRHT1Z", interchange.CreditDecisionsList[0].BSRElement.ReferenceNumber);
+            Assert.Equal("85K2CRYI", interchange.CreditDecisionsList[4].BSRElement.ReferenceNumber);
+            Assert.Equal("ZZ", interchange.CreditDecisionsList[4].REFElement[0].Qualifier);
+            //Assert.Equal("A", interchange.CreditDecisionsList[4].REFElement[1].DecisionCode);
+            Assert.Equal(93, interchange.CreditDecisionsList[4].N1Element.Qualifier);
+
+        }
+        [Fact]
+        [Trait(Traits.Tag, "X12")]
+        [Trait(Traits.Tag, "870")]
         public void X12_870_Test() {
             var grammar = EdiGrammar.NewX12();
 
